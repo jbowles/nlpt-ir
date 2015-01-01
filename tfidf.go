@@ -15,7 +15,6 @@ import (
 )
 
 // TYPES //////////////////////////////////////////////////
-
 // Vector contains values for tf-idf value, document number, and index location of token/term for quicker lookup
 type Vector struct {
 	docNum     int
@@ -37,6 +36,8 @@ type Pair struct {
 // A slice of Pairs that implements sort.Interface to sort by Value of Hash Map.
 type PairList []Pair
 
+type TokenizerFun func(string) []string
+
 // SORT //////////////////////////////////////////////////
 
 // Create needed Sort methods: Len(), Less(), Swap()
@@ -45,7 +46,7 @@ func (p PairList) Len() int           { return len(p) }
 func (p PairList) Less(i, j int) bool { return p[i].Value[0].dotProduct < p[j].Value[0].dotProduct }
 
 // A function to turn a map into a PairList, then sort and return it.
-func (m VecField) sortByTfIdf() PairList {
+func (m *VecField) SortByTfIdf() PairList {
 	p := make(PairList, len(m.Space))
 	i := 0
 	for k, v := range m.Space {
@@ -104,10 +105,10 @@ func Tf(word, doc string) float64 {
 // Idf is the inverse document frequency of tf-idf
 // param:
 // return:
-func Idf(word string, doc_list []string, log string) (idf float64) {
+func Idf(word string, doc_list []string, logarithm string) (idf float64) {
 	// set val for reuse; +1 so we don't get +Inf values
 	val := float64(len(doc_list)+1) / (NumDocsContain(word, doc_list) + 1)
-	switch log {
+	switch logarithm {
 	case "log":
 		idf = math.Log(val) //Log returns the natural logarithm of x.
 	case "log10":

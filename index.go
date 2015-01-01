@@ -18,13 +18,13 @@ import (
 )
 
 // Types
-type Document struct {
+type IndexDocument struct {
 	docNum   int
 	wordIndx int
 }
 
 type ForwardIndex map[int]string
-type InvertedIndex map[string][]Document
+type InvertedIndex map[string][]IndexDocument
 type IndexContainer struct {
 	iIndex *InvertedIndex
 	fIndex *ForwardIndex
@@ -50,7 +50,7 @@ func (idx *ForwardIndex) ItemAt(i int) string {
 }
 
 // Find item by word in Inverted Index
-func (idx *InvertedIndex) Search(query string) []Document {
+func (idx *InvertedIndex) Search(query string) []IndexDocument {
 	ref, ok := (*idx)[query]
 	if ok {
 		//fmt.Printf("***Results for query: '%v'\n", query)
@@ -62,7 +62,7 @@ func (idx *InvertedIndex) Search(query string) []Document {
 ////////////////////////// Size of Indexes ////////////////
 // Size of Inverted Index
 func (idx *InvertedIndex) Size() int {
-	return len(map[string][]Document(*idx))
+	return len(map[string][]IndexDocument(*idx))
 }
 
 // Size of Forward Index
@@ -89,7 +89,7 @@ func (idx *InvertedIndex) AddDoc(docNum int, doc string) {
 			ref = nil
 		}
 
-		(*idx)[word] = append(ref, Document{docNum: docNum, wordIndx: wordIndx})
+		(*idx)[word] = append(ref, IndexDocument{docNum: docNum, wordIndx: wordIndx})
 	}
 }
 
