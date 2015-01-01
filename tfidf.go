@@ -45,7 +45,7 @@ func (p PairList) Len() int           { return len(p) }
 func (p PairList) Less(i, j int) bool { return p[i].Value[0].dotProduct < p[j].Value[0].dotProduct }
 
 // A function to turn a map into a PairList, then sort and return it.
-func (m VecField) sortByTfIdf() PairList {
+func (m VecField) SortByTfIdf() PairList {
 	p := make(PairList, len(m.Space))
 	i := 0
 	for k, v := range m.Space {
