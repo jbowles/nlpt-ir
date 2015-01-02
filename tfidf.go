@@ -18,9 +18,10 @@ import (
 
 // Vector contains values for tf-idf value, document number, and index location of token/term for quicker lookup
 type Vector struct {
-	DocNum     int
-	Index      int
-	DotProduct float64
+	DocNum      int
+	Index       int
+	DotProduct  float64
+	BloomFilter int
 }
 
 // Field contains a space of the map of the token/term to its Vectors
@@ -139,7 +140,7 @@ func (f *VecField) Compose(documents []string) {
 				v = nil
 			}
 			product := TfIdf(word, doc, documents, "log")
-			f.Space[word] = append(v, Vector{docNum, idx, product})
+			f.Space[word] = append(v, Vector{docNum, idx, product, ComputeBloomFilter(word)})
 		}
 	}
 }
