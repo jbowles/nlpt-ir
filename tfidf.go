@@ -15,6 +15,14 @@ import (
 )
 
 // TYPES //////////////////////////////////////////////////
+type Document struct {
+	Token     string
+	Input     string
+	Slice     []string
+	Logarithm string
+	//put tokenizer digest here
+}
+
 // Vector contains values for tf-idf value, document number, and index location of token/term for quicker lookup
 type Vector struct {
 	docNum     int
@@ -35,8 +43,6 @@ type Pair struct {
 
 // A slice of Pairs that implements sort.Interface to sort by Value of Hash Map.
 type PairList []Pair
-
-type TokenizerFun func(string) []string
 
 // SORT //////////////////////////////////////////////////
 
@@ -62,21 +68,21 @@ func (m *VecField) SortByTfIdf() PairList {
 // TermCount gets the total count of all terms in a document
 // param:
 // return:
-func TermCount(doc string) float64 {
-	words := strings.Split(doc, " ") // TODO: use the tokenizer here
-	return float64(len(words))
+func (d *Document) TermCount() float64 {
+	tokens := strings.Split(d.Input, " ") // TODO: use the tokenizer here
+	return float64(len(tokens))
 }
 
 // TokenFreq gets the frequency of term in a document
 // param:
 // return:
-func TokenFreq(word, doc string) float64 {
-	total := TermCount(doc)
+func (d *Document) TokenFreq() float64 {
+	total := d.TermCount()
 	count := 0.0
 	//TODO: replace strings.Fields with tokenizer
-	for _, w := range strings.Fields(doc) {
+	for _, w := range strings.Fields(d.Input) {
 		switch w {
-		case word:
+		case d.Token:
 			count += 1.0
 		}
 	}
@@ -86,9 +92,9 @@ func TokenFreq(word, doc string) float64 {
 // NumDocsContain calculates the number of documents that cotain one term
 // param:
 // return:
-func NumDocsContain(word string, doc_list []string) (count float64) {
-	for _, doc := range doc_list {
-		if TokenFreq(word, doc) > 0.0 {
+func (d *Document) NumDocsContain() (count float64) {
+	for range d.Slice {
+		if d.TokenFreq() > 0.0 {
 			count += 1.0
 		}
 	}
@@ -98,17 +104,17 @@ func NumDocsContain(word string, doc_list []string) (count float64) {
 // Tf is the technical term frequency of tf-idf
 // param:
 // return:
-func Tf(word, doc string) float64 {
-	return (TokenFreq(word, doc) / TermCount(doc))
+func (d *Document) Tf() float64 {
+	return (d.TokenFreq() / d.TermCount())
 }
 
 // Idf is the inverse document frequency of tf-idf
 // param:
 // return:
-func Idf(word string, doc_list []string, logarithm string) (idf float64) {
+func (d *Document) Idf() (idf float64) {
 	// set val for reuse; +1 so we don't get +Inf values
-	val := float64(len(doc_list)+1) / (NumDocsContain(word, doc_list) + 1)
-	switch logarithm {
+	val := float64(len(d.Slice)+1) / (d.NumDocsContain() + 1)
+	switch d.Logarithm {
 	case "log":
 		idf = math.Log(val) //Log returns the natural logarithm of x.
 	case "log10":
@@ -126,21 +132,21 @@ func Idf(word string, doc_list []string, logarithm string) (idf float64) {
 }
 
 // TfIdf returns the Term Frequency-Inverse Document Frequency for a word and all documents
-func TfIdf(word, doc string, doc_list []string, log string) float64 {
-	return (Tf(word, doc) * Idf(word, doc_list, log))
+func (d *Document) TfIdf() float64 {
+	return (d.Tf() * d.Idf())
 }
 
 func (f *VecField) Compose(documents []string) {
-	//initialize Space map
+	d := &Document{Slice: documents}
 	f.Space = make(map[string][]Vector)
-	for doc_num, doc := range documents {
+	for doc_num, doc := range d.Slice {
 		for idx, word := range strings.Fields(doc) {
 			v, ok := f.Space[word]
 			if !ok {
 				v = nil
 			}
-			tfidf_product := TfIdf(word, doc, documents, "log")
-			f.Space[word] = append(v, Vector{doc_num, idx, tfidf_product})
+			//tfidf_product := TfIdf(word, doc, documents, "log")
+			f.Space[word] = append(v, Vector{doc_num, idx, d.TfIdf()})
 		}
 	}
 }
