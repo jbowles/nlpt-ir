@@ -9,6 +9,7 @@
 package nlpt_ir
 
 import (
+	"fmt"
 	"math"
 	"sort"
 	"strings"
@@ -137,16 +138,21 @@ func (d *Document) TfIdf() float64 {
 }
 
 func (f *VecField) Compose(documents []string) {
-	d := &Document{Slice: documents}
+	d := &Document{Slice: documents, Logarithm: "log"}
 	f.Space = make(map[string][]Vector)
-	for doc_num, doc := range d.Slice {
+	for docNum, doc := range documents {
 		for idx, word := range strings.Fields(doc) {
 			v, ok := f.Space[word]
+			fmt.Printf("%v %v\n", v, ok)
 			if !ok {
+				fmt.Println("****** aarrrggg")
 				v = nil
 			}
+			d.Token = word
+			d.Input = doc
 			//tfidf_product := TfIdf(word, doc, documents, "log")
-			f.Space[word] = append(v, Vector{doc_num, idx, d.TfIdf()})
+			tfidf_product := d.TfIdf()
+			f.Space[word] = append(v, Vector{docNum, idx, tfidf_product})
 		}
 	}
 }
