@@ -132,14 +132,14 @@ func TfIdf(word, doc string, doc_list []string, log string) float64 {
 func (f *VecField) Compose(documents []string) {
 	//initialize Space map
 	f.Space = make(map[string][]Vector)
-	for doc_num, doc := range documents {
+	for docNum, doc := range documents {
 		for idx, word := range strings.Fields(doc) {
 			v, ok := f.Space[word]
 			if !ok {
 				v = nil
 			}
-			tfidf_product := TfIdf(word, doc, documents, "log")
-			f.Space[word] = append(v, Vector{doc_num, idx, tfidf_product})
+			product := TfIdf(word, doc, documents, "log")
+			f.Space[word] = append(v, Vector{docNum, idx, product})
 		}
 	}
 }
