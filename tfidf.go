@@ -18,9 +18,9 @@ import (
 
 // Vector contains values for tf-idf value, document number, and index location of token/term for quicker lookup
 type Vector struct {
-	docNum     int
-	index      int
-	dotProduct float64
+	DocNum     int
+	Index      int
+	DotProduct float64
 }
 
 // Field contains a space of the map of the token/term to its Vectors
@@ -42,7 +42,7 @@ type PairList []Pair
 // Create needed Sort methods: Len(), Less(), Swap()
 func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p PairList) Len() int           { return len(p) }
-func (p PairList) Less(i, j int) bool { return p[i].Value[0].dotProduct < p[j].Value[0].dotProduct }
+func (p PairList) Less(i, j int) bool { return p[i].Value[0].DotProduct < p[j].Value[0].DotProduct }
 
 // A function to turn a map into a PairList, then sort and return it.
 func (m VecField) SortByTfIdf() PairList {
