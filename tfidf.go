@@ -14,14 +14,16 @@ import (
 	"strings"
 )
 
+// TODO use a READER WRITER buffer for building TFIDF,,, large documents in string slics dont work.
+
 // TYPES //////////////////////////////////////////////////
 
 // Vector contains values for tf-idf value, document number, and index location of token/term for quicker lookup
 type Vector struct {
-	DocNum      int
-	Index       int
-	DotProduct  float64
-	BloomFilter int
+	DocNum     int
+	Index      int
+	DotProduct float64
+	//BloomFilter int
 }
 
 // Field contains a space of the map of the token/term to its Vectors
@@ -130,6 +132,24 @@ func TfIdf(word, doc string, doc_list []string, log string) float64 {
 	return (Tf(word, doc) * Idf(word, doc_list, log))
 }
 
+// TODO use a READER WRITER buffer for this,,, large documents in string slics dont work.
+func (f *VecField) Compose(documents []string, docNum int) {
+	//initialize Space map
+	f.Space = make(map[string][]Vector)
+	for _, doc := range documents {
+		for idx, word := range strings.Fields(doc) {
+			v, ok := f.Space[word]
+			if !ok {
+				v = nil
+			}
+			product := TfIdf(word, doc, documents, "log")
+			//f.Space[word] = append(v, Vector{docNum, idx, product, ComputeBloomFilter(word)})
+			f.Space[word] = append(v, Vector{docNum, idx, product})
+		}
+	}
+}
+
+/*
 func (f *VecField) Compose(documents []string) {
 	//initialize Space map
 	f.Space = make(map[string][]Vector)
@@ -144,3 +164,4 @@ func (f *VecField) Compose(documents []string) {
 		}
 	}
 }
+*/

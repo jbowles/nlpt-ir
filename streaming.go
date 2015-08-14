@@ -37,9 +37,9 @@ type VectorStream struct {
 	ByteEncoding []byte
 }
 
-func (vf VecField) EncodeVectorStream(byteCache bytes.Buffer) *VectorStream {
-	encErr := gob.NewEncoder(&byteCache).Encode(vf)
-	dec := gob.NewDecoder(&byteCache)
+func (vf VecField) EncodeVectorStream(byteCache *bytes.Buffer) *VectorStream {
+	encErr := gob.NewEncoder(byteCache).Encode(vf)
+	dec := gob.NewDecoder(byteCache)
 	return &VectorStream{
 		GobDecoder:   dec,
 		EncodeError:  encErr,
