@@ -6,7 +6,7 @@
 * tfidf == Term Frequency Inverse Document Frequency.
  */
 
-package nlpt_ir
+package nlptir
 
 import (
 	"math"

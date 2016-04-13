@@ -1,4 +1,4 @@
-package nlpt_ir
+package nlptir
 
 import (
 	"bytes"

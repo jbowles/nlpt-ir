@@ -8,7 +8,7 @@
 * Create an inverted index: simple mapping for string to string index and document number
  */
 
-package nlpt_ir
+package nlptir
 
 import (
 	"bufio"

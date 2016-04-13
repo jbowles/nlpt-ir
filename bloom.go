@@ -8,7 +8,7 @@
 *
  */
 
-package nlpt_ir
+package nlptir
 
 // Constants for the Hashing
 const (
